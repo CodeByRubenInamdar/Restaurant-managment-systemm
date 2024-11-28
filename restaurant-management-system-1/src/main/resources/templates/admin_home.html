@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .action-buttons form {
+            display: inline;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Notifications -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <p th:text="${successMessage}"></p>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <!-- Add New Dish Section -->
+        <div class="section">
+            <h1>Add New Dish</h1>
+            <form th:action="@{/admin/addDish}" method="post">
+                <label for="name">Dish Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+
+                <button type="submit">Add Dish</button>
+            </form>
+        </div>
+
+        <!-- Dishes Management Section -->
+        <div class="section">
+            <h1>Dishes</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dish ID</th>
+                        <th>Dish Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="dish : ${dishes}">
+                        <td th:text="${dish.id}"></td>
+                        <td th:text="${dish.name}"></td>
+                        <td th:text="${dish.description}"></td>
+                        <td th:text="${dish.price}"></td>
+                        <td th:text="${dish.status}"></td>
+                        <td class="action-buttons">
+                            <form th:action="@{/admin/approveDish}" method="post">
+                                <input type="hidden" th:value="${dish.id}" name="id">
+                                <button type="submit">Approve</button>
+                            </form>
+                            <form th:action="@{/admin/rejectDish}" method="post">
+                                <input type="hidden" th:value="${dish.id}" name="id">
+                                <button type="submit">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Customer Bills Section -->
+        <div class="section">
+            <h1>Customer Bills</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Customer Name</th>
+                        <th>Dish Details</th>
+                        <th>Total Price</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="bill : ${bills}">
+                        <td th:text="${bill.id}"></td>
+                        <td th:text="${bill.customerName}"></td>
+                        <td th:text="${bill.dishDetails}"></td>
+                        <td th:text="${bill.totalPrice}"></td>
+                        <td th:text="${#dates.format(bill.date, 'yyyy-MM-dd HH:mm')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

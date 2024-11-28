@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin - Bill Requests</title>
+</head>
+<body>
+    <h1>Customer Bill Requests</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Customer ID</th>
+                <th>Bill Details</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="request : ${billRequests}">
+                <td th:text="${request.customerId}"></td>
+                <td th:text="${request.billDetails}"></td>
+                <td>
+                    <form th:action="@{/admin/approve-request/{id}(id=${request.id})}" method="post">
+                        <button type="submit">Approve</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
